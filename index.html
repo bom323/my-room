@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>即時選號房間</title>
+    <style>
+        :root {
+            --color-1: #ff6b6b; --color-2: #4ecdc4;
+            --color-3: #45b7d1; --color-4: #f9d057;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #2c3e50; color: white; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
+        .header { background: #34495e; padding: 15px 30px; border-radius: 50px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #555; }
+        .room-code { color: #f9d057; font-weight: bold; font-size: 1.2rem; }
+        
+        .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; }
+        
+        .cell {
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+            background: #3d566e; border-radius: 8px; cursor: pointer; transition: all 0.3s;
+            font-weight: bold; font-size: 1.1rem; border: 2px solid transparent;
+        }
+        
+        /* 每一列的專屬顏色邊框與文字 */
+        .row-0 { border-bottom: 3px solid var(--color-1); color: var(--color-1); }
+        .row-1 { border-bottom: 3px solid var(--color-2); color: var(--color-2); }
+        .row-2 { border-bottom: 3px solid var(--color-3); color: var(--color-3); }
+        .row-3 { border-bottom: 3px solid var(--color-4); color: var(--color-4); }
+
+        /* 被選中的狀態 */
+        .cell.active { background: white; color: #2c3e50; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+        
+        .stats { margin-top: 30px; display: flex; gap: 20px; }
+        .stat-box { background: #34495e; padding: 10px 20px; border-radius: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        房間代碼：<span class="room-code">777</span> | 線上人數：<span id="online">1</span>
+    </div>
+
+    <div class="grid" id="mainGrid"></div>
+
+    <div class="stats">
+        <div class="stat-box">已選數量：<span id="count">0</span> / 40</div>
+        <button onclick="location.reload()" style="padding: 10px 20px; border-radius: 8px; cursor: pointer; border:none; background: #e74c3c; color:white;">清除重設</button>
+    </div>
+
+    <script>
+        const grid = document.getElementById('mainGrid');
+        const countDisplay = document.getElementById('count');
+        let activeCount = 0;
+
+        // 建立 4x10 網格
+        for (let i = 0; i < 40; i++) {
+            const cell = document.createElement('div');
+            const rowIdx = Math.floor(i / 10);
+            cell.className = `cell row-${rowIdx}`;
+            cell.innerText = i + 1;
+            
+            cell.onclick = () => {
+                cell.classList.toggle('active');
+                updateStats();
+                // 模擬發送資料到伺服器
+                console.log(`位置 ${i+1} 狀態已更新`);
+            };
+            
+            grid.appendChild(cell);
+        }
+
+        function updateStats() {
+            activeCount = document.querySelectorAll('.cell.active').length;
+            countDisplay.innerText = activeCount;
+        }
+
+        // 模擬「其他人也在選」的隨機效果
+        setInterval(() => {
+            if (Math.random() > 0.8) {
+                const cells = document.querySelectorAll('.cell');
+                const randomIdx = Math.floor(Math.random() * 40);
+                // 這裡僅做視覺示範，實際需對接資料庫
+                // cells[randomIdx].style.opacity = '0.5'; 
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
